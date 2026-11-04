@@ -36,4 +36,24 @@ if [[ ! -e "$path" ]]; then
     invalid "path does not exist: $path"
 fi
 
-echo "Threshold: $threshold  Path: $path"
+log "Checking disk usage for $path (threshold ${threshold}%)"
+
+used="$(df -P -- "$path" | awk 'NR==2 {print $5}' | tr -d '%')"
+
+if ! [[ "$used" =~ ^[0-9]+$ ]]; then
+    echo "Error: could not read disk usage for $path" >&2
+    log "df failed for $path"
+    exit 1
+fi
+
+echo "Disk usage for $path: ${used}% (threshold: ${threshold}%)"
+
+if (( used >= threshold )); then
+    echo "ALERT: usage has reached or exceeded the threshold"
+    log "ALERT: ${used}% >= ${threshold}% for $path"
+    exit 1
+fi
+
+echo "OK: usage is below the threshold"
+log "OK: ${used}% < ${threshold}% for $path"
+exit 0
