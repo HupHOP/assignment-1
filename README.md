@@ -13,7 +13,7 @@ chmod +x *.sh
 ```
 
 Requires Linux with Bash and the standard tools `df`, `awk`, `getent` and `ip`.
-`ping` and `timeout` are used when available.
+`ping`is used when available. `timeout` (part of coreutils) is required for the TCP check.
 
 ## Usage
 
